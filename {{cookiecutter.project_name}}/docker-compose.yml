@@ -1,0 +1,9 @@
+version: '2'
+services:
+    web:
+        build: .
+        ports:
+            - "{{cookiecutter.bind_port}}:{{cookiecutter.bind_port}}"
+        volumes:
+        - ./logs:/opt/app/logs
+        restart: on-failure

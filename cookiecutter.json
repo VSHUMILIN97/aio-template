@@ -1,0 +1,12 @@
+{
+  "project_name": null,
+  "log_output_file": "server",
+  "service_user": "{{cookiecutter.project_name}}",
+  "service_group": "{{cookiecutter.service_user}}",
+  "service_executor": "/usr/bin/python3.6",
+  "service_description": "Microservice for {{cookiecutter.project_name}} project",
+  "bind_address": "0.0.0.0",
+  "bind_port": "8091",
+  "rpm_repository": "7.4.release",
+  "rpm_package_name": "{{cookiecutter.project_name}}"
+}

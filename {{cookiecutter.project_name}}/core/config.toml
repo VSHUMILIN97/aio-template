@@ -1,0 +1,7 @@
+[app]
+client_max_size = 10485760  # 10 Mb
+
+[logging]
+name = "{{cookiecutter.project_name}}"
+level = "DEBUG"
+filename = "{{cookiecutter.log_output_file}}"

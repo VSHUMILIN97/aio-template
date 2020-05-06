@@ -1,0 +1,5 @@
+#!/bin/sh
+cd /opt/{{cookiecutter.project_name}}
+export PYTHONPATH=$(pwd)/libs:${PYTHONPATH}
+./gunicorn core.app:application -c guniconf.py \
+--access-logfile access.log --log-file gunirunner.log --error-logfile error.log

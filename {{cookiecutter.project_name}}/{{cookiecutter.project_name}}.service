@@ -1,0 +1,16 @@
+[Unit]
+Description={{cookiecutter.service_description}}
+After=network.target
+
+[Service]
+PIDFile=/run/{{cookiecutter.project_name}}.pid
+User={{cookiecutter.service_user}}
+Group={{cookiecutter.service_group}}
+WorkingDirectory=/opt/{{cookiecutter.project_name}}
+ExecStart={{cookiecutter.service_executor}} /opt/{{cookiecutter.project_name}}/run
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

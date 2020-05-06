@@ -1,0 +1,21 @@
+image: python:3.7-stretch
+
+before_script:
+  - pip install poetry
+
+stages:
+  - test
+  - build
+
+check:
+  stage: test
+  script:
+    - poetry install
+    - pytest tests/
+
+create_rpm:
+  stage: build
+  script:
+    - ./make_rpm
+  only:
+    - tags

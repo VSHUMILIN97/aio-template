@@ -1,0 +1,42 @@
+set -e
+
+VERSION=$(git describe | sed -e 's/-[0-9a-g]\+$//' -e 's/-/./')
+PKG_NAME={{cookiecutter.rpm_package_name}}-${VERSION}
+DST=dist/${PKG_NAME}
+
+if [ -z "$VERSION" ]; then
+    echo "Error: \$VERSION is not defined"
+    exit 1
+fi
+mkdir -p ~/rpmbuild/SOURCES
+mkdir -p ${DST}
+
+poetry export -o requirements.txt -f requirements.txt --without-hashes
+pip3 install -r requirements.txt -t libs
+
+cp -r core run gunicorn {{cookiecutter.project_name}}.service libs guniconf.py ${DST}
+
+tar -czf ~/rpmbuild/SOURCES/${PKG_NAME}.tar.gz -C dist ${PKG_NAME}
+
+rpmbuild -bb -D "VERSION ${VERSION}" {{cookiecutter.rpm_package_name}}.spec
+RPM_FILE=$(realpath ~/rpmbuild/RPMS/x86_64/${PKG_NAME}-1.el7.x86_64.rpm)
+
+echo -n "Verify that RPM file exists... "
+test -f $RPM_FILE
+echo "ok"
+if [ -z "${RPM_REPO_KEY}" ]; then
+    echo "Please setup RPM_REPO_KEY variable in project settings"
+    exit 1
+fi
+if [ -z "${RPM_REPO_NAME}" ]; then
+    echo "Please setup RPM_REPO_NAME variable in project settings"
+    exit 1
+fi
+
+curl --insecure --show-error --fail -X POST \
+    -F key=${RPM_REPO_KEY} \
+    -F repo_name=${RPM_REPO_NAME} \
+    -F pkg_type=rpm \
+    -F arch=x86_64 \
+    -F file=@${RPM_FILE} \
+    {RPM_REPO}
